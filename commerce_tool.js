@@ -1,6 +1,6 @@
-import {getToken} from './oauth.js';
+import {getToken} from './utilities/oauth.js';
 import inquirer from 'inquirer';
-import {create_org, check_organisation_id, create_conditions, create_query_pipeline} from './functions/Create_org.js';
+import {create_org, check_organisation_id, create_conditions, create_query_pipeline} from './utilities/Create_org.js';
 
 const token = await getToken();
 
@@ -63,7 +63,7 @@ async function run() {
     {
       type: 'input',
       name: 'pipelineSuffix',
-      message: 'Please enter suffix for the 3 CMH query pipeline: (e.g. cmh-search-suffix, cmh-recommendations-suffix)',
+      message: 'Please enter suffix for the 3 CMH query pipeline: (e.g. cmh-search-[suffix], cmh-recommendations-[suffix])',
     }
   ]);
 

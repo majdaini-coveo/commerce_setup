@@ -104,7 +104,6 @@ export async function create_query_pipeline(listConditionID, orgId, pipelineSuff
     const payload = JSON.stringify({
       name: pipeline + "-" + pipelineSuffix,
       isDefault: false,
-      description: "Query pipeline for", pipeline,
       condition: {
         id: conditionID,
       }
