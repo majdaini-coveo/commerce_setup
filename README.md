@@ -26,5 +26,5 @@ This project is a simple Node.js CLI utility designed to assist with creating CM
    npm i
 
 3. start the program:
- ```bash
+   ```bash
    node ./commerce_tool.js
