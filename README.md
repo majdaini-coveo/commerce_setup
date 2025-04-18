@@ -5,9 +5,12 @@ This project is a simple Node.js CLI utility designed to assist with creating CM
 
 ##  How It Works
 
-1. The script asks the user to input a suffix for the CMH pipelines (e.g., `cmh-search-suffix`).
-2. It then pairs each pipeline name with a corresponding condition ID (first with first, second with second, etc.).
-3. Outputs or processes the paired results.
+1. The script automatically fetches the token
+2. Asks user if he wants to create a new org
+3. Asks user to create the tracking ID 
+4. Asks the user to input a suffix for the CMH pipelines (e.g., `cmh-search-suffix`).
+5. Pairs each pipeline name with a corresponding condition ID (first with first, second with second, etc.).
+6. Outputs or processes the paired results.
 
 ## ️ Setup
 
