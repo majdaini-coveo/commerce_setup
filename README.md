@@ -1,4 +1,4 @@
-# CMH Pipeline Suffix Tool
+# CMH Pipeline Tool
 
 This project is a simple Node.js CLI utility designed to assist with creating CMH (Commerce Merchandising Hub) query pipelines.  
 
