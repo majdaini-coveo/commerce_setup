@@ -1,16 +1,33 @@
 import {getToken} from './utilities/oauth.js';
 import inquirer from 'inquirer';
 import {create_org, check_organisation_id, create_conditions, create_query_pipeline} from './utilities/Create_org.js';
+import chalk from 'chalk';
+import {setRegion} from "./utilities/ApiUrlBuilder.js";
 
-const token = await getToken();
+const token = await getToken()
 
 async function run() {
-  const {createNewOrg} = await inquirer.prompt([{
-    type: 'confirm',
-    name: 'createNewOrg',
-    message: 'Create new organization?',
-    default: false,
-  }]);
+
+  const {chooseRegion} = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'chooseRegion',
+      choices: ['EU', 'NA'],
+      message: chalk.green.bold('Select a region please'),
+    }
+  ]);
+
+  console.log("The chosen region is: ", chooseRegion);
+  setRegion(chooseRegion);
+
+  const {createNewOrg} = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'createNewOrg',
+      message: chalk.green.bold('Create new organization?'),
+      default: false,
+    }
+  ]);
 
   let orgId;
 
@@ -19,13 +36,13 @@ async function run() {
       {
         type: 'input',
         name: 'orgName',
-        message: "Please enter your Coveo's organization name:",
+        message: chalk.cyanBright.bold("Please enter your Coveo's organization name:"),
         validate: (input) => input ? true : "Organization name cannot be empty.",
       },
       {
         type: 'input',
         name: 'ownerEmail',
-        message: "Please enter your Coveo's owner email:",
+        message: chalk.cyanBright.bold("Please enter your Coveo's owner email:"),
         validate: (input) => /\S+@\S+\.\S+/.test(input) || "Enter a valid email.",
       },
     ]);
@@ -38,7 +55,7 @@ async function run() {
     if (org && org.id) {
       orgId = org.id;
     } else {
-      console.error("No valid organization ID returned.");
+      console.error(chalk.cyanBright.bold("No valid organization ID returned."));
       return;
     }
   }
@@ -59,7 +76,7 @@ async function run() {
 
 
   const listConditionsID = await create_conditions(orgId, trackingIdName, token);
-  const { pipelineSuffix } = await inquirer.prompt([
+  const {pipelineSuffix} = await inquirer.prompt([
     {
       type: 'input',
       name: 'pipelineSuffix',
