@@ -1,15 +1,31 @@
-const REGION = 'eu';
+import {getApiUrl} from "./ApiUrlBuilder.js";
+
 import inquirer from 'inquirer';
+import {
+  CONDITIONS_ENDPOINT,
+  CREATE_ORG_ENDPOINT,
+  CREATE_PIPELINES_ENDPOINT,
+  SHOW_ORGANIZATION_ENDPOINT
+} from "./ApiEndpoints.js";
+
+
 
 export async function create_org(orgName, ownerEmail, accessToken) {
-  const url = `https://platform-${REGION}.cloud.coveo.com/rest/organizations?name=${encodeURIComponent(orgName)}&owner=${encodeURIComponent(ownerEmail)}&organizationTemplate=POC`;
 
+  const baseApiUrl = getApiUrl();
+  const params = new URLSearchParams({
+    name: orgName,
+    owner: ownerEmail,
+    organizationTemplate: 'POC'
+  });
+
+  const url = baseApiUrl + CREATE_ORG_ENDPOINT + `?${params.toString()}`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Accept': '*/*',
-      'Authorization': `Bearer ${accessToken}`
-    }
+      'Authorization': `Bearer ${accessToken}`,
+    },
   });
 
   const data = await response.json();
@@ -26,7 +42,13 @@ export async function create_org(orgName, ownerEmail, accessToken) {
 
 export async function create_conditions(orgid, trackingidname, token) {
   const context_list = ['Search', 'Recommendations', 'Listing'];
-  const url = `https://platform-eu.cloud.coveo.com/rest/search/v1/admin/pipelines/statements?organizationId=${orgid}`;
+  const baseApiUrl = getApiUrl();
+
+  const params = new URLSearchParams({
+    organizationId: orgid,
+  });
+
+  const url = baseApiUrl + CONDITIONS_ENDPOINT + `?${params.toString()}`;
   const condition_lists = [];
 
   for (const context of context_list) {
@@ -57,6 +79,7 @@ export async function create_conditions(orgid, trackingidname, token) {
 }
 
 export async function check_organisation_id(token) {
+
   const {orgIdName} = await inquirer.prompt([
     {
       type: 'input',
@@ -64,7 +87,9 @@ export async function check_organisation_id(token) {
       message: 'Please enter your Org ID: ',
     }
   ]);
-  const url = `https://platform.cloud.coveo.com/rest/organizations/${orgIdName}`;
+
+  const baseApiUrl = getApiUrl();
+  const url = baseApiUrl + SHOW_ORGANIZATION_ENDPOINT + `${orgIdName}`;
   const headers = {
     'accept': '*/*',
     'Authorization': `Bearer ${token}`
@@ -95,7 +120,12 @@ export async function create_query_pipeline(listConditionID, orgId, pipelineSuff
 
 
   const pipelinesNames = ['cmh-search', 'cmh-recommendations', 'cmh-product-listing']
-  const url = "https://platform-eu.cloud.coveo.com/rest/search/v1/admin/pipelines?organizationId=" + orgId
+  const baseApiUrl = getApiUrl();
+  const params = new URLSearchParams({
+    organizationId: orgId,
+  });
+
+  const url = baseApiUrl + CREATE_PIPELINES_ENDPOINT + `?${params.toString()}`;
   for (let i = 0; i < listConditionID.length; i++) {
 
     const pipeline = pipelinesNames[i]
