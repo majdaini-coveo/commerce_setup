@@ -7,6 +7,7 @@ import {
   CREATE_PIPELINES_ENDPOINT,
   SHOW_ORGANIZATION_ENDPOINT
 } from "./ApiEndpoints.js";
+import chalk from "chalk";
 
 
 
@@ -108,8 +109,8 @@ export async function check_organisation_id(token) {
 
     return data;
   } catch (err) {
-    console.error(err.message);
-    console.log("Please check the Token or the Organization ID and try again");
+    console.error(chalk.redBright.bold(err.message));
+    console.log(chalk.redBright.bold("Please check the Token or the Organization ID and try again"));
     return check_organisation_id(token);
   }
 
@@ -149,7 +150,7 @@ export async function create_query_pipeline(listConditionID, orgId, pipelineSuff
     });
 
     if (!response.ok) {
-      console.error(`Error creating ${pipeline} pipeline`);
+      console.error(chalk.redBright.bold(`Error creating ${pipeline} pipeline`));
     }
   }
 }
