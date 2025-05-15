@@ -3,12 +3,11 @@ import {getApiUrl} from "./ApiUrlBuilder.js";
 import inquirer from 'inquirer';
 import {
   CONDITIONS_ENDPOINT,
-  CREATE_ORG_ENDPOINT,
+  ORGANIZATIONS_ENDPOINT,
   CREATE_PIPELINES_ENDPOINT,
-  SHOW_ORGANIZATION_ENDPOINT
+  SHOW_ORGANIZATION_ENDPOINT, TRACKING_ID_ENDPOINT
 } from "./ApiEndpoints.js";
 import chalk from "chalk";
-
 
 
 export async function create_org(orgName, ownerEmail, accessToken) {
@@ -20,7 +19,7 @@ export async function create_org(orgName, ownerEmail, accessToken) {
     organizationTemplate: 'POC'
   });
 
-  const url = baseApiUrl + CREATE_ORG_ENDPOINT + `?${params.toString()}`;
+  const url = baseApiUrl + ORGANIZATIONS_ENDPOINT + `?${params.toString()}`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -32,21 +31,47 @@ export async function create_org(orgName, ownerEmail, accessToken) {
   const data = await response.json();
 
   if (response.ok) {
-    console.log('Successfully created organization');
+    console.log(chalk.green('Successfully created organization'));
   } else {
-    console.error('Failed to create organization');
+    console.error(chalk.redBright.bold('Failed to create organization'));
     console.error(data);
   }
 
   return data;
 }
 
-export async function create_conditions(orgid, trackingidname, token) {
+export async function create_trackingID(orgID, trackingIDName, accessToken) {
+
+  const baseApiUrl = getApiUrl();
+  const params = new URLSearchParams({
+    displayName: trackingIDName,
+  });
+  const url = baseApiUrl + ORGANIZATIONS_ENDPOINT + "/"+orgID + TRACKING_ID_ENDPOINT
+    + trackingIDName.toLowerCase() + `?${params.toString()}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Accept': '*/*',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+  const data = await response.json();
+
+  if (response.ok) {
+    console.log(chalk.green(data.message))
+  } else {
+    console.error(chalk.redBright.bold('Failed creating Tracking ID '));
+    console.error(chalk.redBright.bold(data));
+  }
+}
+
+export async function create_conditions(orgID, trackingidname, token) {
   const context_list = ['Search', 'Recommendations', 'Listing'];
   const baseApiUrl = getApiUrl();
 
   const params = new URLSearchParams({
-    organizationId: orgid,
+    organizationId: orgID,
   });
 
   const url = baseApiUrl + CONDITIONS_ENDPOINT + `?${params.toString()}`;
@@ -73,7 +98,7 @@ export async function create_conditions(orgid, trackingidname, token) {
     if (response.ok) {
       condition_lists.push(data.id);
     } else {
-      console.error(`Error for ${context}:`, data);
+      console.error(chalk.redBright.bold(`Error for ${context}:`, data));
     }
   }
   return condition_lists;
@@ -104,8 +129,8 @@ export async function check_organisation_id(token) {
     }
 
     const data = await response.json();
-    console.log('Successfully found organization');
-    console.log(data);
+    console.log(chalk.green('Successfully found organization'));
+    console.log(chalk.green(data));
 
     return data;
   } catch (err) {
