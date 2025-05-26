@@ -177,5 +177,6 @@ export async function create_query_pipeline(listConditionID, orgId, pipelineSuff
     if (!response.ok) {
       console.error(chalk.redBright.bold(`Error creating ${pipeline} pipeline`));
     }
+    console.log(chalk.greenBright.bold(`Successfully created the pipelines`));
   }
 }
